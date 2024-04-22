@@ -61,4 +61,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'alquranwithaudio.appspot.com',
     measurementId: 'G-3CY5K179HG',
   );
+
 }

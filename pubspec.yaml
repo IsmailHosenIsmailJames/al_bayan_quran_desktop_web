@@ -1,5 +1,5 @@
 name: al_bayan_quran
-description: "A new Flutter project."
+description: "All in one Al Quran Web App with more than 250 Translations in 69 languages, Quran Audiobook with more than 39 recitors & Notes, favorite and bookmark Backup"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 1.9.2+18
