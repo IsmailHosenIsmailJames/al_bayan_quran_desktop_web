@@ -6,7 +6,8 @@ import 'package:hive_flutter/adapters.dart';
 import '../data/download/download.dart';
 
 class InIt extends StatefulWidget {
-  const InIt({super.key});
+  final int? bootomNavigationIndex;
+  const InIt({super.key, this.bootomNavigationIndex});
 
   @override
   State<InIt> createState() => _InItState();
@@ -28,6 +29,8 @@ class _InItState extends State<InIt> {
         dataBox.get('tafseer', defaultValue: false))) {
       return const DownloadData();
     }
-    return const HomeMobile();
+    return HomeMobile(
+      bootomNavigationIndex: widget.bootomNavigationIndex,
+    );
   }
 }

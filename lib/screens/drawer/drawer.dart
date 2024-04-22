@@ -3,7 +3,6 @@ import 'package:al_bayan_quran/auth/login/login.dart';
 import 'package:al_bayan_quran/screens/drawer/settings_with_appbar.dart';
 import 'package:al_bayan_quran/screens/favorite_bookmark_notes/book_mark.dart';
 import 'package:al_bayan_quran/screens/favorite_bookmark_notes/notes_v.dart';
-import 'package:al_bayan_quran/screens/home_mobile.dart';
 import 'package:al_bayan_quran/theme/theme_controller.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 import '../../theme/theme_icon_button.dart';
-import '../favorite_bookmark_notes/favorite.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -142,7 +140,7 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           TextButton(
             onPressed: () {
-              Get.offAll(() => const HomeMobile());
+              Get.offAllNamed("/home");
             },
             child: const Row(
               children: [
@@ -165,9 +163,7 @@ class _MyDrawerState extends State<MyDrawer> {
               await Hive.openBox('quran');
               await Hive.openBox("translation");
 
-              Get.to(
-                () => const Favorite(),
-              );
+              Get.toNamed("/favorite");
             },
             child: const Row(
               children: [

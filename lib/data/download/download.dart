@@ -9,7 +9,9 @@ import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class DownloadData extends StatefulWidget {
-  const DownloadData({super.key});
+  final int? index;
+  final String? nextRoute;
+  const DownloadData({super.key, this.index, this.nextRoute});
 
   @override
   State<DownloadData> createState() => _DownloadDataState();
@@ -36,7 +38,10 @@ class _DownloadDataState extends State<DownloadData> {
           actions: [
             TextButton(
               onPressed: () {
-                Get.offAll(() => const DownloadData());
+                Get.offAll(() => DownloadData(
+                      index: widget.index,
+                      nextRoute: widget.nextRoute,
+                    ));
               },
               child: const Icon(
                 Icons.restart_alt_outlined,
@@ -252,7 +257,11 @@ class _DownloadDataState extends State<DownloadData> {
         dataBoox.put("tafseer", true);
         infoBox.put('tafseer', preferance['tafseer_book_ID']);
         AppThemeData().initTheme();
-        Get.offAll(() => const HomeMobile());
+        widget.nextRoute == null
+            ? Get.offAll(() => HomeMobile(
+                  bootomNavigationIndex: widget.index,
+                ))
+            : Get.offAllNamed(widget.nextRoute!);
       }
     }
   }

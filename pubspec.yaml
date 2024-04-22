@@ -38,6 +38,7 @@ dependencies:
   sidebarx: ^0.17.1
   audioplayers: ^6.0.0
   firebase_core: ^2.30.0
+  url_strategy: ^0.2.0
 
   # google_fonts: ^6.1.0
 

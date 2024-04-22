@@ -163,14 +163,18 @@ class _SuraViewState extends State<SuraView> {
 
   void scrollToAyahInit(int ayah) async {
     for (int i = 1; i < ayah; i++) {
-      await Future.delayed(const Duration(milliseconds: 5));
-
+      await Future.delayed(const Duration(milliseconds: 7));
       if (listOfkey[i].currentContext != null) {
-        await Scrollable.ensureVisible(
-          listOfkey[i].currentContext!,
-          alignment: 0.5,
-          duration: const Duration(milliseconds: 300),
-        );
+        if (ayah - 1 == i) {
+          await Scrollable.ensureVisible(
+            listOfkey[i].currentContext!,
+            alignment: 0.5,
+          );
+        } else {
+          await Scrollable.ensureVisible(
+            listOfkey[i].currentContext!,
+          );
+        }
       }
     }
   }
@@ -806,10 +810,7 @@ class _SuraViewState extends State<SuraView> {
                                   surahName: widget.surahName,
                                 ));
                           }
-                          if (value == "continuePlay") {
-                            setState(() {});
-                            playAudioList(getAllAudioUrl(), index - 1);
-                          }
+
                           if (value == "bookmark") {
                             infoBox.put("bookmarkUploaded", false);
                             if (!(bookmarkSurahKey.contains(ayahKey))) {
@@ -852,21 +853,6 @@ class _SuraViewState extends State<SuraView> {
                         ),
                         itemBuilder: (BuildContext bc) {
                           return [
-                            const PopupMenuItem(
-                              value: 'continuePlay',
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.audiotrack_outlined,
-                                    color: Colors.green,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text("Contionue Play"),
-                                ],
-                              ),
-                            ),
                             PopupMenuItem(
                               value: 'favorite',
                               child: Row(

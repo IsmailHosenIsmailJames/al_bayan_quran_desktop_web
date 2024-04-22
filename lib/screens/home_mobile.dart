@@ -24,7 +24,11 @@ import 'profile/profile.dart';
 import 'surah_view.dart/surah_with_translation.dart';
 
 class HomeMobile extends StatefulWidget {
-  const HomeMobile({super.key});
+  final int? bootomNavigationIndex;
+  final int? initTab;
+  final int? playChapter;
+  const HomeMobile(
+      {super.key, this.bootomNavigationIndex, this.initTab, this.playChapter});
 
   @override
   State<HomeMobile> createState() => _HomeMobileState();
@@ -33,7 +37,7 @@ class HomeMobile extends StatefulWidget {
 class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
   final SidebarXController _sidebarXController =
       SidebarXController(selectedIndex: 0);
-  int currentIndex = 0;
+  late int currentIndex = widget.bootomNavigationIndex ?? 0;
   bool isPlaying = false;
   AudioPlayer player = AudioPlayer();
   String currentReciter = "";
@@ -93,6 +97,19 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
       });
     });
     openBoxes();
+
+    if (widget.playChapter != null) {
+      initplay();
+    }
+  }
+
+  void initplay() async {
+    await Future.delayed(const Duration(seconds: 1));
+    playAudio(widget.playChapter! - 1, start: true);
+    setState(() {
+      playingIndex = widget.playChapter! - 1;
+      currentReciter += " : Chapter : ${widget.playChapter}";
+    });
   }
 
   bool isExtended = false;
@@ -224,6 +241,9 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
                 playingIndex = index;
               });
             }
+            setState(() {
+              "$nameSimple : $currentReciter";
+            });
           },
           child: Container(
             padding: const EdgeInsets.all(10),
@@ -403,12 +423,15 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
               isPlaying = false;
               playingIndex = -1;
             });
-            await Get.to(() {
-              return SuraView(
-                surahNumber: index,
-                surahName: nameSimple,
-              );
-            });
+            await Get.to(
+              () {
+                return SuraView(
+                  surahNumber: index,
+                  surahName: nameSimple,
+                );
+              },
+              routeName: "/surah?chapter=$index",
+            );
           },
           child: Container(
             padding: const EdgeInsets.all(10),
@@ -1035,8 +1058,8 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
             onPressed: () async {
               await Hive.openBox('quran');
               await Hive.openBox("translation");
-              await Get.to(
-                () => const Favorite(),
+              await Get.toNamed(
+                "/favorite",
               );
               setState(() {
                 playingIndex = -1;
@@ -1062,7 +1085,10 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
             onPressed: () async {
               await Hive.openBox('quran');
               await Hive.openBox("translation");
-              await Get.to(() => const BookMark());
+              await Get.to(
+                () => const BookMark(),
+                routeName: "book-mark",
+              );
               setState(() {
                 playingIndex = -1;
               });
@@ -1088,7 +1114,9 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
               await Hive.openBox('quran');
               await Hive.openBox("translation");
               await Hive.openBox("notes");
-              await Get.to(() => const NotesView());
+              await Get.toNamed(
+                "/notes",
+              );
               setState(() {
                 playingIndex = -1;
               });
@@ -1113,7 +1141,9 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
             onPressed: () async {
               await Hive.openBox("translation");
               await Hive.openBox(quranScriptType);
-              await Get.to(() => const SettingsWithAppbar());
+              await Get.toNamed(
+                "/settings",
+              );
             },
             child: const Row(
               children: [
@@ -1209,6 +1239,7 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
       body: [
         DefaultTabController(
           length: 2,
+          initialIndex: widget.initTab ?? 0,
           child: Scaffold(
             key: drawerController,
             drawer: MediaQuery.of(context).size.width > 650 ? null : myDrawer,
@@ -1221,55 +1252,6 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    actions: const [
-                      // IconButton(
-                      //     onPressed: () {
-                      //       showDialog(
-                      //         useSafeArea: true,
-                      //         context: context,
-                      //         builder: (context) => AlertDialog(
-                      //           title: const Row(
-                      //             children: [
-                      //               Icon(Icons.search),
-                      //               SizedBox(
-                      //                 width: 15,
-                      //               ),
-                      //               Text("Search")
-                      //             ],
-                      //           ),
-                      //           content: Column(
-                      //             mainAxisAlignment: MainAxisAlignment.center,
-                      //             crossAxisAlignment: CrossAxisAlignment.center,
-                      //             mainAxisSize: MainAxisSize.min,
-                      //             children: [
-                      //               TextFormField(
-                      //                 autofocus: true,
-                      //               ),
-                      //               Padding(
-                      //                 padding: const EdgeInsets.only(top: 8.0),
-                      //                 child: Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.spaceAround,
-                      //                     children: [
-                      //                       TextButton(
-                      //                         child: const Text("Quran"),
-                      //                         onPressed: () {},
-                      //                       ),
-                      //                       TextButton(
-                      //                           child: const Text("Translation"),
-                      //                           onPressed: () {}),
-                      //                       TextButton(
-                      //                           child: const Text("Tafseer"),
-                      //                           onPressed: () {}),
-                      //                     ]),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       );
-                      //     },
-                      //     icon: const Icon(Icons.search))
-                    ],
                     bottom: MediaQuery.of(context).size.width > 650
                         ? null
                         : const TabBar(
@@ -1290,14 +1272,6 @@ class _HomeMobileState extends State<HomeMobile> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              // Tab(
-                              //   child: Text(
-                              //     'Pages',
-                              //     style: TextStyle(
-                              //       fontSize: 20,
-                              //     ),
-                              //   ),
-                              // ),
                             ],
                           ),
                   ),
@@ -1725,35 +1699,35 @@ class SideBar extends StatelessWidget {
           icon: Icons.home,
           label: 'Home',
           onTap: () {
-            Get.to(() => const HomeMobile());
+            Get.to(() => const HomeMobile(), routeName: "home");
           },
         ),
         SidebarXItem(
           icon: Icons.favorite,
           label: 'Favorite',
           onTap: () {
-            Get.to(() => const Favorite());
+            Get.to(() => const Favorite(), routeName: "favorite");
           },
         ),
         SidebarXItem(
           icon: Icons.bookmark_added,
           label: 'BookMark',
           onTap: () {
-            Get.to(() => const BookMark());
+            Get.to(() => const BookMark(), routeName: "book-mark");
           },
         ),
         SidebarXItem(
           icon: Icons.note_add,
           label: 'Notes',
           onTap: () {
-            Get.to(() => const NotesView());
+            Get.to(() => const NotesView(), routeName: "notes");
           },
         ),
         SidebarXItem(
           icon: Icons.settings,
           label: 'Settings',
           onTap: () {
-            Get.to(() => const SettingsWithAppbar());
+            Get.to(() => const SettingsWithAppbar(), routeName: "settings");
           },
         ),
       ],
